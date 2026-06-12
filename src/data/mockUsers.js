@@ -1,0 +1,85 @@
+export const MOCK_USERS = [
+  {
+    id: "ks", initials: "KS", name: "Karim S.",
+    distance: "0.3 km", walk: "4 min walk", time: "2 min ago",
+    intent: "Coffee", online: true,
+    message: "Down for a quick coffee before noon. Anyone around Marsa area?",
+    avatarBg: "linear-gradient(135deg,#6D28D9,#A78BFA)", avatarColor: "#EDE9FE",
+    pin: { top: "28%", left: "58%" }, matched: true,
+  },
+  {
+    id: "mj", initials: "MJ", name: "Maya J.",
+    distance: "0.7 km", walk: "9 min walk", time: "5 min ago",
+    intent: "Walk", online: true,
+    message: "Heading to the waterfront. Would be nice to walk with someone.",
+    avatarBg: "linear-gradient(135deg,#065F46,#34D399)", avatarColor: "#D1FAE5",
+    pin: { top: "55%", left: "72%" }, matched: false,
+  },
+  {
+    id: "al", initials: "AL", name: "Amir L.",
+    distance: "1.1 km", walk: "14 min walk", time: "8 min ago",
+    intent: "Talk", online: false,
+    message: "Open to chatting about startups, music, or literally anything.",
+    avatarBg: "linear-gradient(135deg,#9D174D,#F9A8D4)", avatarColor: "#FCE7F3",
+    pin: { top: "22%", left: "30%" }, matched: false,
+  },
+  {
+    id: "tw", initials: "TW", name: "Tamar W.",
+    distance: "1.4 km", walk: "18 min walk", time: "12 min ago",
+    intent: "Gym", online: false,
+    message: "Looking for a gym partner this afternoon. I go to FitZone.",
+    avatarBg: "linear-gradient(135deg,#7C2D12,#FB923C)", avatarColor: "#FEF3C7",
+    pin: { top: "65%", left: "25%" }, matched: false,
+  },
+];
+
+export const PRESENCE = [
+  { initials: "KS", online: true },
+  { initials: "MJ", online: true },
+  { initials: "AL", online: false },
+  { initials: "RN", online: true },
+  { initials: "TW", online: false },
+];
+
+export const INTENT_CONFIG = {
+  Coffee: {
+    card: "linear-gradient(135deg, #1E1408 0%, #2A1C0C 60%, #1A1208 100%)",
+    border: "rgba(251,191,36,0.22)", shadow: "rgba(251,146,60,0.08)",
+    hoverShadow: "rgba(251,146,60,0.18)",
+    tag: { bg: "rgba(251,191,36,0.15)", color: "#FCD34D", border: "rgba(251,191,36,0.3)" },
+    btn: "linear-gradient(90deg, #92400E, #B45309)", btnColor: "#FEF3C7",
+    pin: "rgba(251,191,36,0.9)", pinText: "#1A0A00", pinTail: "#F59E0B",
+    color: "#FCD34D", activeBg: "rgba(251,191,36,0.2)", activeBorder: "rgba(251,191,36,0.6)",
+    emoji: "☕",
+  },
+  Walk: {
+    card: "linear-gradient(135deg, #0A1A12 0%, #0E2018 60%, #091610 100%)",
+    border: "rgba(52,211,153,0.2)", shadow: "rgba(52,211,153,0.06)",
+    hoverShadow: "rgba(52,211,153,0.15)",
+    tag: { bg: "rgba(52,211,153,0.14)", color: "#6EE7B7", border: "rgba(52,211,153,0.3)" },
+    btn: "linear-gradient(90deg, #065F46, #059669)", btnColor: "#D1FAE5",
+    pin: "rgba(52,211,153,0.9)", pinText: "#012A1A", pinTail: "#10B981",
+    color: "#6EE7B7", activeBg: "rgba(52,211,153,0.2)", activeBorder: "rgba(52,211,153,0.6)",
+    emoji: "🚶",
+  },
+  Talk: {
+    card: "linear-gradient(135deg, #130A22 0%, #1C1030 60%, #100820 100%)",
+    border: "rgba(167,139,250,0.22)", shadow: "rgba(167,139,250,0.07)",
+    hoverShadow: "rgba(167,139,250,0.16)",
+    tag: { bg: "rgba(167,139,250,0.14)", color: "#C4B5FD", border: "rgba(167,139,250,0.3)" },
+    btn: "linear-gradient(90deg, #4C1D95, #6D28D9)", btnColor: "#EDE9FE",
+    pin: "rgba(167,139,250,0.9)", pinText: "#1A0A2E", pinTail: "#7C3AED",
+    color: "#C4B5FD", activeBg: "rgba(167,139,250,0.2)", activeBorder: "rgba(167,139,250,0.6)",
+    emoji: "💬",
+  },
+  Gym: {
+    card: "linear-gradient(135deg, #1A0C06 0%, #261508 60%, #180B05 100%)",
+    border: "rgba(249,115,22,0.2)", shadow: "rgba(249,115,22,0.06)",
+    hoverShadow: "rgba(249,115,22,0.15)",
+    tag: { bg: "rgba(249,115,22,0.14)", color: "#FDBA74", border: "rgba(249,115,22,0.3)" },
+    btn: "linear-gradient(90deg, #7C2D12, #C2410C)", btnColor: "#FEF3C7",
+    pin: "rgba(249,115,22,0.9)", pinText: "#1A0500", pinTail: "#EA580C",
+    color: "#FDBA74", activeBg: "rgba(249,115,22,0.2)", activeBorder: "rgba(249,115,22,0.6)",
+    emoji: "🏋️",
+  },
+};

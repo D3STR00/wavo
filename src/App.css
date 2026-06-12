@@ -1,0 +1,55 @@
+import { useState } from "react"
+
+const users = [
+  { id: 1, name: "Amina", bio: "Love travel & music" },
+  { id: 2, name: "Youssef", bio: "Gym + tech addict" },
+  { id: 3, name: "Sara", bio: "Designer & coffee lover" }
+]
+
+export default function App() {
+  const [index, setIndex] = useState(0)
+
+  const user = users[index]
+
+  const nextUser = () => {
+    setIndex((prev) => (prev + 1) % users.length)
+  }
+
+  return (
+    <div style={{
+      height: "100vh",
+      background: "#0a0a0a",
+      color: "white",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+      gap: "20px"
+    }}>
+
+      <div style={{
+        width: "300px",
+        height: "400px",
+        background: "#1a1a1a",
+        borderRadius: "20px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
+      }}>
+        <h2>{user.name}</h2>
+        <p>{user.bio}</p>
+      </div>
+
+      <button onClick={nextUser} style={{
+        padding: "10px 20px",
+        borderRadius: "10px",
+        border: "none",
+        cursor: "pointer"
+      }}>
+        Next
+      </button>
+
+    </div>
+  )
+}
