@@ -1,12 +1,14 @@
 import { useState } from "react";
 import BottomNav from "../components/BottomNav";
 import Avatar from "../components/Avatar";
-import { MOCK_USERS, PRESENCE, INTENT_CONFIG } from "../data/mockUsers";
+import { PRESENCE, INTENT_CONFIG } from "../data/mockUsers";
+import { useIntentFeed } from "../hooks/useIntentFeed";
+import { sendWaveToUser } from "../hooks/useWaveActions";
 
 const INTENTS = ["☕ Coffee", "🚶 Walk", "💬 Talk", "🏋️ Gym", "+ More"];
 
-function FeedCard({ card, onWave, waved }) {
-  const c = INTENT_CONFIG[card.intent];
+function FeedCard({ card, onWave, waved, matched }) {
+  const c = INTENT_CONFIG[card.intent] || INTENT_CONFIG["Coffee"];
   const [hovered, setHovered] = useState(false);
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
@@ -28,20 +30,33 @@ function FeedCard({ card, onWave, waved }) {
       <div style={{ fontSize:13, color:"rgba(220,216,240,0.75)", lineHeight:1.55, marginBottom:10 }}>{card.message}</div>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
         <span style={{ fontSize:11, color:"rgba(180,175,210,0.45)" }}>🚶 {card.walk}</span>
-        {card.matched || waved ? (
+        {matched ? (
           <button style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:"linear-gradient(90deg,#065F46,#34D399)", color:"#F0FFF4", border:"none", cursor:"default" }}>✓ Matched</button>
+        ) : waved ? (
+          <button style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:"rgba(255,255,255,0.08)", color:"rgba(220,220,240,0.5)", border:"none", cursor:"default" }}>👋 Waved</button>
         ) : (
-          <button onClick={() => onWave(card.id)} style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:c.btn, color:c.btnColor, border:"none", cursor:"pointer" }}>👋 Wave</button>
+          <button onClick={() => onWave(card)} style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:c.btn, color:c.btnColor, border:"none", cursor:"pointer" }}>👋 Wave</button>
         )}
       </div>
     </div>
   );
 }
 
-export default function FeedScreen({ userState, wavedIds, sendWave, formatTime, goOffline, onOpenIntentFlow, onGoNearby, onGoChat, onGoProfile }) {
+export default function FeedScreen({ userState, formatTime, goOffline, onOpenIntentFlow, onGoNearby, onGoChat, onGoProfile }) {
   const [activeIntent, setActiveIntent] = useState(0);
+  const { intents, loading } = useIntentFeed();
+  const [wavedIds, setWavedIds] = useState([]);
+  const [matchedIds, setMatchedIds] = useState([]);
   const isLive = userState.status === "live";
   const liveConfig = isLive ? INTENT_CONFIG[userState.intent] : null;
+
+  const handleWave = async (card) => {
+    setWavedIds(prev => [...prev, card.id]);
+    const result = await sendWaveToUser(card.userId, card.intent.toLowerCase());
+    if (result?.matched) {
+      setMatchedIds(prev => [...prev, card.id]);
+    }
+  };
 
   return (
     <div style={{ fontFamily:"'DM Sans',sans-serif", background:"#0C0C14", color:"#F0EEF8", minHeight:"100vh", maxWidth:390, margin:"0 auto", display:"flex", flexDirection:"column" }}>
@@ -52,7 +67,7 @@ export default function FeedScreen({ userState, wavedIds, sendWave, formatTime, 
         <div style={{ position:"absolute", width:120, height:120, borderRadius:"50%", bottom:-30, left:30, background:"radial-gradient(circle,rgba(20,180,160,0.25) 0%,transparent 70%)", pointerEvents:"none" }} />
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18, position:"relative" }}>
           <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, letterSpacing:-1, background:"linear-gradient(90deg,#A78BFA,#34D399)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>wavo</span>
-          <span style={{ background:"rgba(52,211,153,0.15)", border:"1px solid rgba(52,211,153,0.4)", color:"#34D399", fontSize:11, fontWeight:500, padding:"3px 10px", borderRadius:20 }}>● 24 nearby</span>
+          <span style={{ background:"rgba(52,211,153,0.15)", border:"1px solid rgba(52,211,153,0.4)", color:"#34D399", fontSize:11, fontWeight:500, padding:"3px 10px", borderRadius:20 }}>● {intents.length} active</span>
           <div style={{ width:36, height:36, borderRadius:"50%", background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:16 }}>🔔</div>
         </div>
         <div style={{ fontSize:11, fontWeight:500, color:"rgba(160,160,200,0.7)", letterSpacing:1.5, textTransform:"uppercase", marginBottom:10 }}>What do you want right now?</div>
@@ -85,19 +100,24 @@ export default function FeedScreen({ userState, wavedIds, sendWave, formatTime, 
         </div>
       </div>
 
-      {/* MATCH BANNER */}
-      <div onClick={onGoChat} style={{ margin:"4px 16px 0", background:"linear-gradient(90deg,rgba(167,139,250,0.18),rgba(52,211,153,0.18))", border:"1px solid rgba(167,139,250,0.35)", borderRadius:16, padding:"11px 14px", display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
-        <div style={{ width:8, height:8, borderRadius:"50%", background:"#A78BFA", animation:"mpulse 1.4s infinite" }} />
-        <div style={{ flex:1, fontSize:12, color:"#C4B5FD", fontWeight:500 }}>KS matched your coffee intent — say hi 👋</div>
-        <span style={{ color:"rgba(196,181,253,0.55)" }}>→</span>
-      </div>
-
       {/* FEED */}
       <div style={{ padding:"14px 16px 16px", flex:1, overflowY:"auto" }}>
         <div style={{ fontSize:11, fontWeight:500, color:"rgba(160,160,200,0.45)", letterSpacing:1.2, textTransform:"uppercase", marginBottom:12 }}>Near you</div>
-        {MOCK_USERS.map(card => (
-          <FeedCard key={card.id} card={card} onWave={sendWave} waved={wavedIds.includes(card.id)} />
-        ))}
+        {loading ? (
+          <div style={{ textAlign:"center", color:"rgba(180,175,210,0.4)", fontSize:13, marginTop:40 }}>Loading intents...</div>
+        ) : intents.length === 0 ? (
+          <div style={{ textAlign:"center", color:"rgba(180,175,210,0.4)", fontSize:13, marginTop:40 }}>No active intents nearby. Be the first! ⚡</div>
+        ) : (
+          intents.map(card => (
+            <FeedCard
+              key={card.id}
+              card={card}
+              onWave={handleWave}
+              waved={wavedIds.includes(card.id)}
+              matched={matchedIds.includes(card.id)}
+            />
+          ))
+        )}
       </div>
 
       {/* FLOATING LIVE BUTTON */}

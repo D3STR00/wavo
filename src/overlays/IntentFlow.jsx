@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { INTENT_CONFIG } from "../data/mockUsers";
+import { supabase } from "../lib/supabase";
 
 const INTENTS = ["Coffee", "Walk", "Talk", "Gym"];
 
@@ -7,10 +8,39 @@ export default function IntentFlow({ onClose, onGoLive }) {
   const [step, setStep] = useState(1);
   const [selectedIntent, setSelectedIntent] = useState(null);
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const selected = selectedIntent ? INTENT_CONFIG[selectedIntent] : null;
 
-  const handleGoLive = () => {
+  const handleGoLive = async () => {
+    setSaving(true);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+
+    if (user) {
+      // Expire any existing active intents for this user first
+      await supabase
+        .from("intents")
+        .update({ status: "expired" })
+        .eq("user_id", user.id)
+        .eq("status", "active");
+
+      // Now insert the new intent
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+      const { error } = await supabase.from("intents").insert({
+        user_id: user.id,
+        type: selectedIntent.toLowerCase(),
+        message: message || null,
+        status: "active",
+        expires_at: expiresAt,
+      });
+      if (error) console.error("Insert error:", JSON.stringify(error));
+    } else {
+      console.warn("No user session found");
+    }
+
+    setSaving(false);
     onGoLive({ intent: selectedIntent, message, emoji: selected.emoji, color: selected.color });
     onClose();
   };
@@ -78,7 +108,14 @@ export default function IntentFlow({ onClose, onGoLive }) {
               rows={2}
             />
             <div style={{ fontSize:10, color:"rgba(160,160,200,0.3)", textAlign:"right", marginBottom:20 }}>{message.length}/60</div>
-            <button onClick={handleGoLive} style={{ width:"100%", padding:"14px", borderRadius:16, border:"none", fontSize:15, fontWeight:700, cursor:"pointer", background:"linear-gradient(90deg,#6D28D9,#4F46E5)", color:"#F0EEF8", marginBottom:10 }}>🟢 Go live — 5 min</button>
+            <button onClick={handleGoLive} disabled={saving} style={{
+              width:"100%", padding:"14px", borderRadius:16, border:"none", fontSize:15, fontWeight:700,
+              cursor: saving ? "not-allowed" : "pointer",
+              background: saving ? "rgba(255,255,255,0.06)" : "linear-gradient(90deg,#6D28D9,#4F46E5)",
+              color:"#F0EEF8", marginBottom:10
+            }}>
+              {saving ? "Going live..." : "🟢 Go live — 5 min"}
+            </button>
             <div onClick={() => setStep(1)} style={{ textAlign:"center", fontSize:12, color:"rgba(180,175,210,0.4)", cursor:"pointer", paddingTop:4 }}>← Back</div>
           </>
         )}

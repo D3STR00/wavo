@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabaseClient.js";
+import { supabase } from "../lib/supabase";
 
 export default function SignupScreen({ onGoLogin, onSignupSuccess }) {
   const [step, setStep] = useState("form"); // "form" | "verify"

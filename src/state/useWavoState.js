@@ -64,7 +64,6 @@ export function useWavoState() {
   const [wavedIds, setWavedIds] = useState([]);
 
   const timerRef = useRef(null);
-  const waveTimerRef = useRef(null);
 
   // PERSIST whenever state changes
   useEffect(() => {
@@ -103,21 +102,11 @@ export function useWavoState() {
     };
     setUserState(newState);
     persistState(newState);
-
-    // Simulate incoming wave after 8 seconds (demo)
-    waveTimerRef.current = setTimeout(() => {
-      setActiveWave({
-        id: "ks", initials: "KS", name: "Karim S.",
-        intent, distance: "0.3 km",
-      });
-      setShowAlert(true);
-    }, 8000);
   };
 
   // GO OFFLINE
   const goOffline = () => {
     clearInterval(timerRef.current);
-    clearTimeout(waveTimerRef.current);
     localStorage.removeItem(STORAGE_KEY);
     setUserState({ ...DEFAULT_STATE });
   };

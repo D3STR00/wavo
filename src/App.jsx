@@ -33,7 +33,7 @@ export default function App() {
       if (session) {
         setScreen("feed");
       } else {
-        setScreen("signup");
+        setScreen("login");
       }
     });
   }, []);
