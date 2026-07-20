@@ -17,10 +17,11 @@ export async function sendWaveToUser(targetUserId, intentType) {
   const swiperId = user.id;
 
   // 1. Insert wave (A → B)
-  const { error: insertError } = await supabase.from("swipes").insert({
-    swiper_id: swiperId,
-    target_id: targetUserId,
-    direction: "wave",
+  const { error: insertError } = await supabase.from("waves").insert({
+    from_user_id: swiperId,
+    to_user_id: targetUserId,
+    intent_type: intentType,
+    status: "pending",
   });
 
   if (insertError) {
@@ -30,11 +31,11 @@ export async function sendWaveToUser(targetUserId, intentType) {
 
   // 2. Check reverse wave (B → A)
   const { data: reverseWave, error: reverseError } = await supabase
-    .from("swipes")
+    .from("waves")
     .select("id")
-    .eq("swiper_id", targetUserId)
-    .eq("target_id", swiperId)
-    .eq("direction", "wave")
+    .eq("from_user_id", targetUserId)
+    .eq("to_user_id", swiperId)
+    .eq("status", "pending")
     .maybeSingle();
 
   if (reverseError) {
