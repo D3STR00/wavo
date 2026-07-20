@@ -6,6 +6,8 @@ import Avatar from "../components/Avatar";
 import { PRESENCE, INTENT_CONFIG } from "../data/mockUsers";
 import { useIntentFeed } from "../hooks/useIntentFeed";
 import { sendWaveToUser } from "../hooks/useWaveActions";
+import { useWaveRealtime } from "../hooks/useWaveRealtime";
+import { WavoAlert } from "../components/wavo/wavo-alert";
 
 const INTENTS = ["☕ Coffee", "🚶 Walk", "💬 Talk", "🏋️ Gym", "+ More"];
 
@@ -18,11 +20,16 @@ export default function FeedScreen({
   onGoChat,
   onGoProfile
 }) {
+
   const [activeIntent, setActiveIntent] = useState(0);
+
   const { intents, loading } = useIntentFeed();
+
+  const { incomingWave, setIncomingWave } = useWaveRealtime();
 
   const isLive = userState.status === "live";
   const liveConfig = isLive ? INTENT_CONFIG[userState.intent] : null;
+
 
   const handleWave = async (card) => {
     await sendWaveToUser(
@@ -30,6 +37,7 @@ export default function FeedScreen({
       card.intent.toLowerCase()
     );
   };
+
 
   return (
     <div style={{
@@ -42,6 +50,7 @@ export default function FeedScreen({
       display:"flex",
       flexDirection:"column"
     }}>
+
 
       {/* BANNER */}
       <div style={{
@@ -61,12 +70,14 @@ export default function FeedScreen({
           background:"radial-gradient(circle,rgba(100,60,220,0.35) 0%,transparent 70%)"
         }}/>
 
+
         <div style={{
           display:"flex",
           alignItems:"center",
           justifyContent:"space-between",
           marginBottom:18
         }}>
+
           <span style={{
             fontFamily:"'Syne',sans-serif",
             fontWeight:800,
@@ -77,6 +88,7 @@ export default function FeedScreen({
           }}>
             wavo
           </span>
+
 
           <span style={{
             background:"rgba(52,211,153,0.15)",
@@ -89,6 +101,7 @@ export default function FeedScreen({
             ● {intents.length} active
           </span>
 
+
           <div style={{
             width:36,
             height:36,
@@ -100,7 +113,9 @@ export default function FeedScreen({
           }}>
             🔔
           </div>
+
         </div>
+
 
         <div style={{
           fontSize:11,
@@ -110,8 +125,11 @@ export default function FeedScreen({
           What do you want right now?
         </div>
 
+
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+
           {INTENTS.map((intent,i)=>(
+
             <div
               key={intent}
               onClick={()=>setActiveIntent(i)}
@@ -128,13 +146,19 @@ export default function FeedScreen({
             >
               {intent}
             </div>
+
           ))}
+
         </div>
+
       </div>
 
 
+
       {/* LIVE */}
+
       {isLive && liveConfig && (
+
         <div style={{
           margin:"8px 16px 0",
           borderRadius:16,
@@ -144,6 +168,7 @@ export default function FeedScreen({
           gap:10,
           background:`linear-gradient(90deg,${liveConfig.activeBg},rgba(52,211,153,0.1))`
         }}>
+
           <div style={{
             width:8,
             height:8,
@@ -151,19 +176,26 @@ export default function FeedScreen({
             background:liveConfig.color
           }}/>
 
+
           <div style={{flex:1,fontSize:12}}>
             {liveConfig.emoji} You're live — {userState.intent} · {formatTime(userState.timeLeft)}
           </div>
 
+
           <div onClick={goOffline}>
             End
           </div>
+
         </div>
+
       )}
 
 
+
       {/* PRESENCE */}
+
       <div style={{padding:"16px 20px 8px"}}>
+
         <div style={{
           fontSize:11,
           color:"rgba(160,160,200,0.5)",
@@ -172,19 +204,26 @@ export default function FeedScreen({
           Active now
         </div>
 
+
         <div style={{display:"flex"}}>
+
           {PRESENCE.map((p,i)=>(
+
             <div key={p.initials} style={{
               marginLeft:i===0?0:-10
             }}>
+
               <Avatar
                 initials={p.initials}
                 size={52}
                 showDot
                 online={p.online}
               />
+
             </div>
+
           ))}
+
 
           <div style={{
             width:52,
@@ -198,16 +237,21 @@ export default function FeedScreen({
           }}>
             +18
           </div>
+
         </div>
+
       </div>
 
 
+
       {/* FEED */}
+
       <div style={{
         padding:"14px 16px 16px",
         flex:1,
         overflowY:"auto"
       }}>
+
 
         <div style={{
           fontSize:11,
@@ -218,10 +262,13 @@ export default function FeedScreen({
         </div>
 
 
+
         {loading ? (
+
           <div style={{textAlign:"center"}}>
             Loading intents...
           </div>
+
 
         ) : intents.length===0 ? (
 
@@ -229,9 +276,11 @@ export default function FeedScreen({
             No active intents nearby.
           </div>
 
+
         ) : (
 
           intents.map(card=>(
+
             <IntentCard
               key={card.id}
               item={{
@@ -246,6 +295,7 @@ export default function FeedScreen({
               }}
               onWave={()=>handleWave(card)}
             />
+
           ))
 
         )}
@@ -253,9 +303,19 @@ export default function FeedScreen({
       </div>
 
 
+
       {!isLive && (
         <GoLive onClick={onOpenIntentFlow}/>
       )}
+
+
+
+      <WavoAlert
+        wave={incomingWave}
+        onWaveBack={() => setIncomingWave(null)}
+        onPass={() => setIncomingWave(null)}
+      />
+
 
 
       <BottomNav
@@ -265,6 +325,7 @@ export default function FeedScreen({
         onChat={onGoChat}
         onProfile={onGoProfile}
       />
+
 
     </div>
   );
