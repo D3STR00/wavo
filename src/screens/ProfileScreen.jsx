@@ -1,5 +1,5 @@
 import { useState } from "react";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../components/wavo/bottom-nav";
 
 const INTENT_HISTORY = [
   { intent: "Coffee", emoji: "☕", count: 12, color: "#FCD34D" },

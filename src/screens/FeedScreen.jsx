@@ -1,5 +1,5 @@
 import { useState } from "react";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../components/wavo/bottom-nav";
 import Avatar from "../components/Avatar";
 import { PRESENCE, INTENT_CONFIG } from "../data/mockUsers";
 import { useIntentFeed } from "../hooks/useIntentFeed";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../components/wavo/bottom-nav";
 
 const MESSAGES = [
   { id: 1, from: "them", text: "Hey! You down for coffee?", time: "2:41 PM" },
