@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { INTENTS, intentBy, type IntentKind } from "@/lib/wavo";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";

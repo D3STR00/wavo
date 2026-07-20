@@ -1,3 +1,5 @@
+import { IntentCard } from "../components/wavo/intent-card";
+import { GoLiveControl as GoLive } from "../components/wavo/go-live";
 import { useState } from "react";
 import BottomNav from "../components/wavo/bottom-nav";
 import Avatar from "../components/Avatar";
@@ -6,41 +8,6 @@ import { useIntentFeed } from "../hooks/useIntentFeed";
 import { sendWaveToUser } from "../hooks/useWaveActions";
 
 const INTENTS = ["☕ Coffee", "🚶 Walk", "💬 Talk", "🏋️ Gym", "+ More"];
-
-function FeedCard({ card, onWave, waved, matched }) {
-  const c = INTENT_CONFIG[card.intent] || INTENT_CONFIG["Coffee"];
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
-      background:c.card, border:`1px solid ${c.border}`, borderRadius:20,
-      padding:"14px 15px", marginBottom:11, cursor:"pointer",
-      position:"relative", overflow:"hidden", transition:"transform 0.18s,box-shadow 0.18s",
-      transform: hovered ? "translateY(-2px)" : "none",
-      boxShadow: hovered ? `0 8px 32px ${c.hoverShadow}` : `0 4px 24px ${c.shadow}`,
-    }}>
-      <div style={{ position:"absolute", right:14, top:10, fontSize:38, opacity:0.07, pointerEvents:"none" }}>{c.emoji}</div>
-      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:9 }}>
-        <Avatar initials={card.initials} size={40} />
-        <div style={{ flex:1 }}>
-          <div style={{ fontWeight:500, fontSize:14, color:"#EEEAF8" }}>{card.name}</div>
-          <div style={{ fontSize:11, color:"rgba(180,175,210,0.5)", marginTop:1 }}>📍 {card.distance} · {card.time}</div>
-        </div>
-        <div style={{ fontSize:11, fontWeight:600, padding:"4px 10px", borderRadius:20, background:c.tag.bg, color:c.tag.color, border:`1px solid ${c.tag.border}` }}>{c.emoji} {card.intent}</div>
-      </div>
-      <div style={{ fontSize:13, color:"rgba(220,216,240,0.75)", lineHeight:1.55, marginBottom:10 }}>{card.message}</div>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <span style={{ fontSize:11, color:"rgba(180,175,210,0.45)" }}>🚶 {card.walk}</span>
-        {matched ? (
-          <button style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:"linear-gradient(90deg,#065F46,#34D399)", color:"#F0FFF4", border:"none", cursor:"default" }}>✓ Matched</button>
-        ) : waved ? (
-          <button style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:"rgba(255,255,255,0.08)", color:"rgba(220,220,240,0.5)", border:"none", cursor:"default" }}>👋 Waved</button>
-        ) : (
-          <button onClick={() => onWave(card)} style={{ padding:"6px 16px", borderRadius:20, fontSize:12, fontWeight:600, background:c.btn, color:c.btnColor, border:"none", cursor:"pointer" }}>👋 Wave</button>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function FeedScreen({ userState, formatTime, goOffline, onOpenIntentFlow, onGoNearby, onGoChat, onGoProfile }) {
   const [activeIntent, setActiveIntent] = useState(0);
@@ -109,12 +76,23 @@ export default function FeedScreen({ userState, formatTime, goOffline, onOpenInt
           <div style={{ textAlign:"center", color:"rgba(180,175,210,0.4)", fontSize:13, marginTop:40 }}>No active intents nearby. Be the first! ⚡</div>
         ) : (
           intents.map(card => (
-            <FeedCard
+            <IntentCard
               key={card.id}
-              card={card}
-              onWave={handleWave}
-              waved={wavedIds.includes(card.id)}
-              matched={matchedIds.includes(card.id)}
+              item={{
+                userId: card.userId,
+                name: card.name,
+                intent: card.intent.toLowerCase(),
+                message: card.message,
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 300000).toISOString(),
+                state: matchedIds.includes(card.id)
+                  ? "matched"
+                  : "normal",
+                waveState: wavedIds.includes(card.id)
+                  ? "sent"
+                  : "idle",
+              }}
+              onWave={() => handleWave(card)}
             />
           ))
         )}
@@ -122,15 +100,7 @@ export default function FeedScreen({ userState, formatTime, goOffline, onOpenInt
 
       {/* FLOATING LIVE BUTTON */}
       {!isLive && (
-        <div onClick={onOpenIntentFlow} style={{
-          position:"fixed", bottom:100, left:"50%", transform:"translateX(-50%)",
-          background:"linear-gradient(90deg,#6D28D9,#4F46E5)",
-          color:"#F0EEF8", fontSize:14, fontWeight:700,
-          padding:"13px 28px", borderRadius:40, cursor:"pointer",
-          boxShadow:"0 4px 24px rgba(109,40,217,0.5)",
-          zIndex:50, whiteSpace:"nowrap",
-          border:"1px solid rgba(167,139,250,0.3)",
-        }}>⚡ I'm down for...</div>
+        <GoLive onClick={onOpenIntentFlow} />
       )}
 
       <BottomNav active="feed" onFeed={() => {}} onNearby={onGoNearby} onChat={onGoChat} onProfile={onGoProfile} />
