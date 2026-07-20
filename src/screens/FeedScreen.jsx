@@ -6,6 +6,8 @@ import Avatar from "../components/Avatar";
 import { PRESENCE, INTENT_CONFIG } from "../data/mockUsers";
 import { useIntentFeed } from "../hooks/useIntentFeed";
 import { sendWaveToUser } from "../hooks/useWaveActions";
+import { WavoAlert } from "../components/wavo/wavo-alert";
+import { MatchModal } from "../components/wavo/match-modal";
 
 const INTENTS = ["☕ Coffee", "🚶 Walk", "💬 Talk", "🏋️ Gym", "+ More"];
 
@@ -14,16 +16,29 @@ export default function FeedScreen({ userState, formatTime, goOffline, onOpenInt
   const { intents, loading } = useIntentFeed();
   const [wavedIds, setWavedIds] = useState([]);
   const [matchedIds, setMatchedIds] = useState([]);
+  const [incomingWave, setIncomingWave] = useState(null);
+  const [matchInfo, setMatchInfo] = useState(null);
   const isLive = userState.status === "live";
   const liveConfig = isLive ? INTENT_CONFIG[userState.intent] : null;
 
   const handleWave = async (card) => {
-    setWavedIds(prev => [...prev, card.id]);
-    const result = await sendWaveToUser(card.userId, card.intent.toLowerCase());
-    if (result?.matched) {
-      setMatchedIds(prev => [...prev, card.id]);
-    }
-  };
+  setWavedIds(prev => [...prev, card.id]);
+
+  const result = await sendWaveToUser(
+    card.userId,
+    card.intent.toLowerCase()
+  );
+
+  if (result?.matched) {
+    setMatchedIds(prev => [...prev, card.id]);
+
+    setMatchInfo({
+      matchId: result.matchId || card.id,
+      name: card.name,
+      intent: card.intent.toLowerCase(),
+    });
+  }
+};
 
   return (
     <div style={{ fontFamily:"'DM Sans',sans-serif", background:"#0C0C14", color:"#F0EEF8", minHeight:"100vh", maxWidth:390, margin:"0 auto", display:"flex", flexDirection:"column" }}>
@@ -103,7 +118,18 @@ export default function FeedScreen({ userState, formatTime, goOffline, onOpenInt
         <GoLive onClick={onOpenIntentFlow} />
       )}
 
-      <BottomNav active="feed" onFeed={() => {}} onNearby={onGoNearby} onChat={onGoChat} onProfile={onGoProfile} />
+      <WavoAlert
+  wave={incomingWave}
+  onWaveBack={() => setIncomingWave(null)}
+  onPass={() => setIncomingWave(null)}
+/>
+
+<MatchModal
+  match={matchInfo}
+  onClose={() => setMatchInfo(null)}
+/>
+
+<BottomNav active="feed" onFeed={() => {}} onNearby={onGoNearby} onChat={onGoChat} onProfile={onGoProfile} />
     </div>
   );
 }
