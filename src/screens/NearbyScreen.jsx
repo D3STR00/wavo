@@ -43,7 +43,7 @@ export default function NearbyScreen({ userState, formatTime, goOffline, onOpenI
       </div>
 
       {/* LIVE MAP */}
-      <LiveNearbyMap intents={filtered} activeFilter={activeFilter} />
+      <LiveNearbyMap intents={filtered} />
 
       {/* LIST */}
       <div style={{ flex:1, overflowY:"auto", padding:"12px 14px 16px" }}>
