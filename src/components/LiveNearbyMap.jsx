@@ -71,19 +71,33 @@ export default function LiveNearbyMap({ intents }) {
     let cancelled = false;
     let channel;
     let refreshTimer;
+    let presenceHeartbeat;
 
     async function loadPresence() {
       const { data, error } = await supabase
         .from("user_presence")
         .select("user_id, lat, lng, is_online, last_active")
-        .eq("is_online", true);
+        .eq("is_online", true)
+        .gt("last_active", new Date(Date.now() - 120000).toISOString().slice(0, 19));
       if (!cancelled && !error) setPresence(data || []);
     }
 
     async function start() {
       const { data: { user } } = await supabase.auth.getUser();
       if (cancelled) return;
-      if (user) setUid(user.id);
+      if (user) {
+        setUid(user.id);
+        const writeHeartbeat = async () => {
+          const { error } = await supabase.from("user_presence").upsert({
+            user_id: user.id,
+            is_online: true,
+            last_active: new Date().toISOString(),
+          }, { onConflict: "user_id" });
+          if (error) console.error("Wavo presence heartbeat failed:", error.message);
+        };
+        await writeHeartbeat();
+        presenceHeartbeat = window.setInterval(writeHeartbeat, 45000);
+      }
 
       await loadPresence();
       if (cancelled) return;
@@ -137,6 +151,7 @@ export default function LiveNearbyMap({ intents }) {
       cancelled = true;
       if (channel) supabase.removeChannel(channel);
       if (refreshTimer) window.clearInterval(refreshTimer);
+      if (presenceHeartbeat) window.clearInterval(presenceHeartbeat);
       if (watchRef.current !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchRef.current);
     };
   }, []);
