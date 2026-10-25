@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LiveNearbyMap from "../components/LiveNearbyMap";
 import BottomNav from "../components/wavo/bottom-nav";
 import { INTENT_CONFIG } from "../data/mockUsers";
 import { useIntentFeed } from "../hooks/useIntentFeed";
@@ -41,44 +42,8 @@ export default function NearbyScreen({ userState, formatTime, goOffline, onOpenI
         ))}
       </div>
 
-      {/* MAP */}
-      <div style={{ margin:"0 14px", borderRadius:20, overflow:"hidden", position:"relative", flexShrink:0, height:200, background:"#0D1A1A", border:"1px solid rgba(255,255,255,0.07)" }}>
-        <div style={{ width:"100%", height:"100%", position:"relative", background:"linear-gradient(135deg,#0A1A14 0%,#0D1F1A 40%,#091510 100%)" }}>
-          <div style={{ position:"absolute", inset:0, opacity:0.06, backgroundImage:"linear-gradient(rgba(52,211,153,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,0.5) 1px,transparent 1px)", backgroundSize:"32px 32px" }} />
-          <div style={{ position:"absolute", height:2, background:"rgba(255,255,255,0.08)", top:"45%", left:0, right:0 }} />
-          <div style={{ position:"absolute", height:2, background:"rgba(255,255,255,0.05)", top:"70%", left:0, right:0 }} />
-          <div style={{ position:"absolute", width:2, background:"rgba(255,255,255,0.08)", left:"35%", top:0, bottom:0 }} />
-          <div style={{ position:"absolute", width:2, background:"rgba(255,255,255,0.05)", left:"65%", top:0, bottom:0 }} />
-          <div style={{ position:"absolute", width:140, height:140, borderRadius:"50%", border:"1px dashed rgba(167,139,250,0.2)", background:"rgba(167,139,250,0.03)", top:"50%", left:"50%", transform:"translate(-50%,-50%)", pointerEvents:"none" }} />
-
-          {/* YOU pin */}
-          <div style={{ position:"absolute", width:44, height:44, borderRadius:"50%", background: isLive ? `${liveConfig?.activeBg || "rgba(167,139,250,0.15)"}` : "rgba(167,139,250,0.15)", border:`2px solid ${isLive ? liveConfig?.color || "#A78BFA" : "rgba(167,139,250,0.5)"}`, display:"flex", alignItems:"center", justifyContent:"center", top:"50%", left:"50%", transform:"translate(-50%,-50%)", animation: isLive ? "youPulse 1.2s infinite" : "youPulse 2s infinite" }}>
-            <div style={{ width:14, height:14, borderRadius:"50%", background: isLive ? liveConfig?.color || "#A78BFA" : "#A78BFA", border:"2px solid #0C0C14" }} />
-            {isLive && <div style={{ position:"absolute", top:-4, right:-4, background:"#34D399", borderRadius:10, fontSize:7, fontWeight:700, color:"#0C0C14", padding:"1px 4px" }}>LIVE</div>}
-          </div>
-
-          {/* Real user pins — distributed across map */}
-          {filtered.map((u, i) => {
-            const s = INTENT_CONFIG[u.intent] || INTENT_CONFIG["Coffee"];
-            const positions = [
-              { top:"28%", left:"58%" },
-              { top:"55%", left:"72%" },
-              { top:"22%", left:"30%" },
-              { top:"65%", left:"25%" },
-              { top:"35%", left:"45%" },
-              { top:"70%", left:"60%" },
-            ];
-            const pos = positions[i % positions.length];
-            return (
-              <div key={u.id} style={{ position:"absolute", display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer", top:pos.top, left:pos.left }}>
-                <div style={{ padding:"4px 8px", borderRadius:20, fontSize:11, fontWeight:600, display:"flex", alignItems:"center", gap:4, whiteSpace:"nowrap", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", background:s.pin, color:s.pinText }}>{s.emoji} {u.initials}</div>
-                <div style={{ width:6, height:6, borderRadius:"50%", marginTop:2, background:s.pinTail }} />
-              </div>
-            );
-          })}
-          <div style={{ position:"absolute", bottom:10, right:12, fontSize:10, color:"rgba(180,175,210,0.4)" }}>Marsa, Tunis</div>
-        </div>
-      </div>
+      {/* LIVE MAP */}
+      <LiveNearbyMap intents={filtered} activeFilter={activeFilter} />
 
       {/* LIST */}
       <div style={{ flex:1, overflowY:"auto", padding:"12px 14px 16px" }}>
