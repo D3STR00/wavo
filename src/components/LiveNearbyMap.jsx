@@ -52,7 +52,7 @@ function obfuscatePosition(lat, lng, key) {
   return [lat + Math.cos(angle) * offset, lng + Math.sin(angle) * offset];
 }
 
-export default function LiveNearbyMap({ intents, activeFilter }) {
+export default function LiveNearbyMap({ intents }) {
   const elementRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef(null);
