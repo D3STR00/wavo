@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useWavoState } from "./state/useWavoState";
 import { supabase } from "./lib/supabase";
 
+import WallScreen from "./screens/WallScreen";
 import FeedScreen from "./screens/FeedScreen";
 import NearbyScreen from "./screens/NearbyScreen";
 import ChatScreen from "./screens/ChatScreen";
@@ -39,6 +40,7 @@ export default function App() {
   }, []);
 
   const nav = {
+    onGoWall: () => setScreen("wall"),
     onGoFeed: () => setScreen("feed"),
     onGoNearby: () => setScreen("nearby"),
     onGoChat: () => setScreen("chat"),
@@ -110,10 +112,11 @@ export default function App() {
       )}
 
       {/* MAIN SCREENS */}
+      {screen === "wall" && <WallScreen {...nav} />}
       {screen === "feed" && <FeedScreen {...sharedProps} />}
       {screen === "nearby" && <NearbyScreen {...sharedProps} />}
-      {screen === "chat" && <ChatScreen onGoFeed={nav.onGoFeed} onGoNearby={nav.onGoNearby} onGoProfile={nav.onGoProfile} />}
-      {screen === "profile" && <ProfileScreen onGoFeed={nav.onGoFeed} onGoNearby={nav.onGoNearby} onGoChat={nav.onGoChat} />}
+      {screen === "chat" && <ChatScreen onGoWall={nav.onGoWall} onGoFeed={nav.onGoFeed} onGoNearby={nav.onGoNearby} onGoProfile={nav.onGoProfile} />}
+      {screen === "profile" && <ProfileScreen onGoWall={nav.onGoWall} onGoFeed={nav.onGoFeed} onGoNearby={nav.onGoNearby} onGoChat={nav.onGoChat} />}
 
       {/* OVERLAYS — layer on top of any screen */}
       {showIntentFlow && (

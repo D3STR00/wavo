@@ -1,0 +1,39 @@
+.wavo-nav {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 40;
+  border-top: 1px solid #ffffff1a;
+  background: #0c0c14ed;
+  backdrop-filter: blur(16px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.wavo-nav-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 36rem;
+  margin: auto;
+}
+
+.wavo-nav button {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 9px 0;
+  border: 0;
+  background: transparent;
+  color: #b0aabc;
+  font: 500 12px "DM Sans", sans-serif;
+  cursor: pointer;
+}
+
+.wavo-nav button span {
+  display: grid;
+  width: 52px;
+  height: 32px;
+  place-items: center;
+  border-radius: 20px;
+}
+
+.wavo-nav button[aria-current="page"] { color: #fff; }
+.wavo-nav button[aria-current="page"] span { background: #ffffff1a; }

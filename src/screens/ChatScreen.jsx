@@ -8,7 +8,7 @@ const MESSAGES = [
   { id: 4, from: "me", text: "On my way, 5 min", time: "2:43 PM" },
 ];
 
-export default function ChatScreen({ onGoFeed, onGoNearby, onGoProfile }) {
+export default function ChatScreen({ onGoFeed, onGoNearby, onGoProfile, onGoWall }) {
   const [messages, setMessages] = useState(MESSAGES);
   const [input, setInput] = useState("");
 
@@ -58,7 +58,7 @@ export default function ChatScreen({ onGoFeed, onGoNearby, onGoProfile }) {
         <div onClick={send} style={{ width:40, height:40, borderRadius:"50%", background:"linear-gradient(135deg,#6D28D9,#4F46E5)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:16, flexShrink:0 }}>→</div>
       </div>
 
-      <BottomNav active="chat" onFeed={onGoFeed} onNearby={onGoNearby} onChat={() => {}} onProfile={onGoProfile} />
+      <BottomNav onWall={onGoWall} active="chat" onFeed={onGoFeed} onNearby={onGoNearby} onChat={() => {}} onProfile={onGoProfile} />
     </div>
   );
 }

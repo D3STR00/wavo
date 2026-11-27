@@ -18,7 +18,8 @@ export default function FeedScreen({
   onOpenIntentFlow,
   onGoNearby,
   onGoChat,
-  onGoProfile
+  onGoProfile,
+  onGoWall,
 }) {
 
   const [activeIntent, setActiveIntent] = useState(0);
@@ -319,6 +320,7 @@ export default function FeedScreen({
 
 
       <BottomNav
+        onWall={onGoWall}
         active="feed"
         onFeed={()=>{}}
         onNearby={onGoNearby}

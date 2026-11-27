@@ -12,7 +12,7 @@ const BADGES = [
   { label: "ID verified", color: "#A78BFA", bg: "rgba(167,139,250,0.12)", border: "rgba(167,139,250,0.3)" },
 ];
 
-export default function ProfileScreen({ onGoFeed, onGoNearby, onGoChat }) {
+export default function ProfileScreen({ onGoFeed, onGoNearby, onGoChat, onGoWall }) {
   const [editing, setEditing] = useState(false);
   const [tagline, setTagline] = useState("Usually around Marsa. Coffee first, everything else after.");
 
@@ -100,7 +100,7 @@ export default function ProfileScreen({ onGoFeed, onGoNearby, onGoChat }) {
         </div>
       </div>
 
-      <BottomNav active="profile" onFeed={onGoFeed} onNearby={onGoNearby} onChat={onGoChat} onProfile={() => {}} />
+      <BottomNav onWall={onGoWall} active="profile" onFeed={onGoFeed} onNearby={onGoNearby} onChat={onGoChat} onProfile={() => {}} />
     </div>
   );
 }

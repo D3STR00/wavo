@@ -1,0 +1,60 @@
+.wall {
+  box-sizing: border-box;
+  width: min(100%, 36rem);
+  margin: 0 auto;
+  padding: 24px 16px 110px;
+  color: #f6f3ff;
+  font: 16px "DM Sans", sans-serif;
+}
+
+.wall-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.wall-header h1 {
+  font: 800 clamp(1.5rem, 6vw, 2rem) "Syne", sans-serif;
+}
+
+.wall-card {
+  margin-bottom: 16px;
+  border: 1px solid #ffffff1a;
+  border-radius: 16px;
+  background: #171523;
+  overflow: hidden;
+}
+
+.wall-form { padding: 16px; }
+.wall-form fieldset { display: grid; gap: 10px; border: 0; min-width: 0; }
+
+.wall button, .wall textarea, .wall input { font: inherit; }
+
+.wall button {
+  justify-self: start;
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 10px;
+  background: #c4b5fd;
+  color: #17112c;
+  cursor: pointer;
+}
+
+.wall button:disabled { opacity: 0.55; cursor: default; }
+
+.wall textarea {
+  padding: 8px;
+  border: 1px solid #ffffff33;
+  border-radius: 8px;
+  background: #0c0c14;
+  color: inherit;
+  resize: vertical;
+}
+
+.wall-post img { display: block; width: 100%; max-height: 32rem; object-fit: contain; background: #0c0c14; }
+.wall-post p, .wall-post time { display: block; padding: 10px 14px; overflow-wrap: anywhere; }
+.wall-post p { white-space: pre-wrap; }
+.wall-post time { color: #c3bbd6; font-size: 0.85rem; }
+.wall [role="alert"] { margin: 8px 0; color: #fda4af; }

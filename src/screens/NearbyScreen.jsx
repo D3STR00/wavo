@@ -5,7 +5,7 @@ import { useIntentFeed } from "../hooks/useIntentFeed";
 
 const FILTERS = ["All", "☕ Coffee", "🚶 Walk", "💬 Talk", "🏋️ Gym"];
 
-export default function NearbyScreen({ userState, formatTime, goOffline, onOpenIntentFlow, onGoFeed, onGoChat, onGoProfile }) {
+export default function NearbyScreen({ userState, formatTime, goOffline, onOpenIntentFlow, onGoFeed, onGoChat, onGoProfile, onGoWall }) {
   const [activeFilter, setActiveFilter] = useState("All");
   const { intents } = useIntentFeed();
   const isLive = userState.status === "live";
@@ -114,7 +114,7 @@ export default function NearbyScreen({ userState, formatTime, goOffline, onOpenI
         <div onClick={onOpenIntentFlow} style={{ position:"fixed", bottom:100, left:"50%", transform:"translateX(-50%)", background:"linear-gradient(90deg,#6D28D9,#4F46E5)", color:"#F0EEF8", fontSize:14, fontWeight:700, padding:"13px 28px", borderRadius:40, cursor:"pointer", boxShadow:"0 4px 24px rgba(109,40,217,0.5)", zIndex:50, whiteSpace:"nowrap", border:"1px solid rgba(167,139,250,0.3)" }}>⚡ I'm down for...</div>
       )}
 
-      <BottomNav active="nearby" onFeed={onGoFeed} onNearby={() => {}} onChat={onGoChat} onProfile={onGoProfile} />
+      <BottomNav onWall={onGoWall} active="nearby" onFeed={onGoFeed} onNearby={() => {}} onChat={onGoChat} onProfile={onGoProfile} />
     </div>
   );
 }
